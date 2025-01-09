@@ -1,0 +1,86 @@
+<template>
+    <lightning-card>
+        <lightning-button label="Expand All" onclick={expandAll} icon-name="utility:add" class="slds-var-p-around_small"></lightning-button>
+        <lightning-button label="Collapse All" onclick={collapseAll} variant="brand-outline" icon-name="utility:dash" class="slds-var-p-around_small"></lightning-button>
+        <br></br> 
+        <template if:true={error}>
+            <p>Error loading data: {error}</p>
+        </template>
+
+        <table class="slds-table">
+            <tbody>
+                <!-- SECTIONS -->
+                <template for:each={projectActivities} for:item="section">
+                    <tr key={section.id} class="section-header">
+                        <td>
+                            <button onclick={toggleSection} data-id={section.id} class="slds-button slds-button_icon slds-m-right_x-small">
+                                <lightning-icon icon-name="utility:chevronright" variant="inverse" alternative-text="Expand" size="x-small"></lightning-icon>
+                            </button>
+                            {section.name}
+                        </td>
+                        <td>Status</td>
+                        <td>Start Date (F)</td>
+                        <td>Start Date (A)</td>
+                        <td>Complete Date (F)</td>
+                        <td>Complete Date (A)</td>
+                        <td>Original Budget</td>
+                        <td>Current Budget</td>
+                        <td>Est Cost</td>
+                        <td>Est % of Budget</td>
+                    </tr>
+        
+                    <!-- ACTIVITIES -->
+                    <template for:each={section.activities} for:item="activity">
+                        <tr key={activity.id} class="activity-row hidden" data-section={section.id}>
+                            <td class="activity-line">
+                                <button onclick={toggleActivity} data-id={activity.id} class="slds-button slds-button_icon slds-m-right_x-small">
+                                    <lightning-icon icon-name="utility:chevronright" alternative-text="Expand" size="xx-small"></lightning-icon>
+                                </button>
+                                <a href=#link>{activity.wbsActivity}</a>
+                            </td>
+                            <td><span class={activity.statusClass}>{activity.activityStatus}</span></td>
+                            <td><input type="text" class="mydate" value={activity.formattedStartDateF} onfocus={handleFocus} onblur={handleBlur} onchange={handleDateChange} data-id={activity.id} data-field="startDateF"></td>
+                            <td><input type="date" class="mydate" value={activity.formattedStartDateA} onchange={handleDateChange} data-id={activity.id} data-field="startDateA"></td>
+                            <td><input type="date" class="mydate" value={activity.forecastDate} onchange={handleDateChange} data-id={activity.id} data-field="forecastDate"></td>
+                            <td><input type="date" class="mydate" value={activity.actualDate} onchange={handleDateChange} data-id={activity.id} data-field="actualDate"></td>
+                            <!-- If there is a value for the budgets, display a $ in front of the decimal. If there is no value, hide the $ -->
+                            <td>{activity.formattedOriginalBudget}</td>
+                            <td>{activity.formattedCurrentBudget}</td>
+                            <td>{activity.formattedEstimatedCost}</td>
+                            <td>{activity.formattedPercent}</td>
+                        </tr>
+        
+                        <!-- FINANCE LINES -->
+                        <template for:each={activity.financeLines} for:item="finance">
+                            <tr key={finance.id} class="finance-row hidden" data-parent={activity.id}>
+                                <td class="finance-line"><a href="\{'/'+ finance.Id + '/view'}" target="_blank">{finance.article}</a></td>
+                                <td>{finance.shortDescription}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>{finance.formattedCmtdExtCost}</td>
+                                <td>{finance.formattedCmtdIntCost}</td>
+                                <td><span style="color: green;">{finance.formattedEstimatedCost}</span></td>
+                                <td></td>
+                            </tr>
+                        </template>
+                    </template>
+                </template>
+            </tbody>
+        </table>
+
+        <!-- <template if:true={treeData}>
+            <lightning-button label="Expand All" onclick={clickToExpandAll} class="slds-var-p-around_small"></lightning-button>
+            <lightning-button label="Collapse All" onclick={clickToCollapseAll} variant="brand" class="slds-var-p-around_small"></lightning-button>
+
+            <lightning-tree-grid
+                key-field="id"
+                data={treeData}
+                columns={columns}
+                hide-checkbox-column
+            ></lightning-tree-grid>
+        </template> -->
+
+    </lightning-card>
+</template>
